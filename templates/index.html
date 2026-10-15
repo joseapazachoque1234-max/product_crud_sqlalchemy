@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div><p class="eyebrow">PANEL DE CONTROL</p><h1>Inventario de productos</h1><p class="muted">Registra y administra productos desde una sola pantalla.</p></div>
+  <div class="counter"><strong>{{ products|length }}</strong><span>productos registrados</span></div>
+</section>
+<section class="panel">
+  <h2>Registrar producto</h2>
+  <form action="{{ url_for('create_product') }}" method="post" class="product-form">
+    <label>Nombre<input name="name" type="text" maxlength="120" placeholder="Ej. Teclado inalámbrico" required></label>
+    <label>Precio<input name="price" type="number" min="0" step="0.01" placeholder="0.00" required></label>
+    <label>Stock<input name="stock" type="number" min="0" step="1" value="0" required></label>
+    <button type="submit">+ Guardar producto</button>
+  </form>
+</section>
+<section class="panel">
+  <div class="section-heading"><h2>Productos registrados</h2><span class="pill">Lectura de base de datos</span></div>
+  {% if products %}
+  <div class="table-scroll"><table>
+    <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
+    <tbody>
+    {% for product in products %}
+      <tr><td>#{{ product.id }}</td><td class="product-name">{{ product.name }}</td><td>{{ "%.2f"|format(product.price) }}</td><td><span class="stock">{{ product.stock }}</span></td>
+      <td class="actions"><a class="edit" href="{{ url_for('edit_product', product_id=product.id) }}">Editar</a>
+      <form action="{{ url_for('delete_product', product_id=product.id) }}" method="post" onsubmit="return confirm('¿Eliminar este producto?')"><button class="delete" type="submit">Eliminar</button></form></td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+    <div class="empty"><div class="empty-icon">□</div><strong>Aún no hay productos</strong><p>Completa el formulario para registrar el primero.</p></div>
+  {% endif %}
+</section>
+{% endblock %}
